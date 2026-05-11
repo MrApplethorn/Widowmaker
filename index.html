@@ -90,14 +90,8 @@
         "Skirmisher"
       ];
 
-      function randomEnemyGroup() {
-        const shuffled = [...enemyTypes].sort(() => Math.random() - 0.5);
-        const count = Math.floor(Math.random() * 3) + 1;
-        return shuffled.slice(0, count).join(" + ");
-      }
-
-      function randomObstacleGroup() {
-        const shuffled = [...obstacles].sort(() => Math.random() - 0.5);
+      function randomGroup(list) {
+        const shuffled = [...list].sort(() => Math.random() - 0.5);
         const count = Math.floor(Math.random() * 3) + 1;
         return shuffled.slice(0, count).join(" + ");
       }
@@ -136,6 +130,35 @@
         innerEl.style.transform = `translateY(${targetY}px)`;
       }
 
+      function buildGroupReel(innerEl, list, spinDuration) {
+        const SPIN_COUNT = 30;
+        const items = [];
+
+        for (let i = 0; i < SPIN_COUNT; i++) {
+          items.push(randomGroup(list));
+        }
+        items.push(randomGroup(list));
+
+        innerEl.innerHTML = '';
+
+        items.forEach(text => {
+          const div = document.createElement('div');
+          div.className = 'reel-item';
+          div.textContent = text;
+          innerEl.appendChild(div);
+        });
+
+        innerEl.style.transition = 'none';
+        innerEl.style.transform = 'translateY(0)';
+
+        innerEl.getBoundingClientRect();
+
+        innerEl.style.transition =
+          `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
+
+        innerEl.style.transform = `translateY(${-(SPIN_COUNT * 80)}px)`;
+      }
+
       function spinReels() {
         generateButton.disabled = true;
 
@@ -146,54 +169,23 @@
           1800
         );
 
-        buildReel(
+        buildGroupReel(
           document.getElementById('inner-combat'),
           combatTypes,
-          Math.floor(Math.random() * combatTypes.length),
           2200
         );
 
-        const obstacleResults = [];
-        for (let i = 0; i < 30; i++) {
-          obstacleResults.push(randomObstacleGroup());
-        }
-        obstacleResults.push(randomObstacleGroup());
+        buildGroupReel(
+          document.getElementById('inner-obstacle'),
+          obstacles,
+          2600
+        );
 
-        const obstacleInner = document.getElementById('inner-obstacle');
-        obstacleInner.innerHTML = '';
-        obstacleResults.forEach(text => {
-          const div = document.createElement('div');
-          div.className = 'reel-item';
-          div.textContent = text;
-          obstacleInner.appendChild(div);
-        });
-        obstacleInner.style.transition = 'none';
-        obstacleInner.style.transform = 'translateY(0)';
-        obstacleInner.getBoundingClientRect();
-        obstacleInner.style.transition =
-          `transform 2600ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-        obstacleInner.style.transform = `translateY(${-(30 * 80)}px)`;
-
-        const enemyResults = [];
-        for (let i = 0; i < 30; i++) {
-          enemyResults.push(randomEnemyGroup());
-        }
-        enemyResults.push(randomEnemyGroup());
-
-        const enemyInner = document.getElementById('inner-enemy');
-        enemyInner.innerHTML = '';
-        enemyResults.forEach(text => {
-          const div = document.createElement('div');
-          div.className = 'reel-item';
-          div.textContent = text;
-          enemyInner.appendChild(div);
-        });
-        enemyInner.style.transition = 'none';
-        enemyInner.style.transform = 'translateY(0)';
-        enemyInner.getBoundingClientRect();
-        enemyInner.style.transition =
-          `transform 3000ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-        enemyInner.style.transform = `translateY(${-(30 * 80)}px)`;
+        buildGroupReel(
+          document.getElementById('inner-enemy'),
+          enemyTypes,
+          3000
+        );
 
         setTimeout(() => {
           generateButton.disabled = false;
@@ -204,16 +196,18 @@
 
       (function initReels() {
         const reels = [
-          { el: document.getElementById('inner-objective'), list: objectives },
-          { el: document.getElementById('inner-combat'), list: combatTypes },
-          { el: document.getElementById('inner-obstacle'), list: obstacles },
-          { el: document.getElementById('inner-enemy'), list: enemyTypes }
+          { el: document.getElementById('inner-objective'), list: objectives, single: true },
+          { el: document.getElementById('inner-combat'), list: combatTypes, single: false },
+          { el: document.getElementById('inner-obstacle'), list: obstacles, single: false },
+          { el: document.getElementById('inner-enemy'), list: enemyTypes, single: false }
         ];
 
-        reels.forEach(({ el, list }) => {
+        reels.forEach(({ el, list, single }) => {
           const div = document.createElement('div');
           div.className = 'reel-item';
-          div.textContent = list[Math.floor(Math.random() * list.length)];
+          div.textContent = single
+            ? list[Math.floor(Math.random() * list.length)]
+            : randomGroup(list);
           el.appendChild(div);
         });
       })();
