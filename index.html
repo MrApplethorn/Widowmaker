@@ -16,8 +16,8 @@
       <h1>Widowmaker</h1>
       <p class="intro-text">Unsure of what your next combat is going to look like? Click on Generate Combat to be assailed with enough inspiration to last a whole session. I have also made some other inspirators, those you can find at the buttons below.</p>
       <div class="link-buttons">
-        <button class="link" href="https://mrapplethorn.github.io/Deck-of-Many-Things/">Oracle</button>
-        <button class="link" href="https://mrapplethorn.github.io/Random-NPC-Generator/">Towncrier</button>
+        <a class="link" href="https://mrapplethorn.github.io/Deck-of-Many-Things/">Oracle</a>
+        <a class="link" href="https://mrapplethorn.github.io/Random-NPC-Generator/">Towncrier</a>
       </div>
       <hr class="section-divider">
       <div class="reels">
@@ -224,28 +224,6 @@
 
       const generateButton = document.getElementById("generateButton");
 
-      function buildReel(innerEl, list, finalIndex, spinDuration) {
-        const SPIN_COUNT = 30;
-        const items = [];
-
-        for (let i = 0; i < SPIN_COUNT; i++) {
-          items.push(list[Math.floor(Math.random() * list.length)]);
-        }
-        items.push(list[finalIndex]);
-
-        innerEl.innerHTML = '';
-        items.forEach((text, i) => {
-          innerEl.appendChild(makeReelItem(text, innerEl.dataset.category, innerEl.dataset.panelId, i === items.length - 1));
-        });
-
-        innerEl.style.transition = 'none';
-        innerEl.style.transform = 'translateY(0)';
-        const targetY = -(SPIN_COUNT * 80);
-        innerEl.getBoundingClientRect();
-        innerEl.style.transition = `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-        innerEl.style.transform = `translateY(${targetY}px)`;
-      }
-
       function buildGroupReel(innerEl, list, spinDuration, minCount = 1, maxCount = 3) {
         const SPIN_COUNT = 30;
         const items = [];
@@ -285,10 +263,10 @@
 
       (function initReels() {
         const reels = [
-          { el: document.getElementById('inner-objective'), list: objectives, min: 1, max: 2, category: 'Combat Objective', panelId: 'description-objective' },
-          { el: document.getElementById('inner-combat'), list: combatTypes, min: 1, max: 2, category: 'Combat Type', panelId: 'description-combat' },
-          { el: document.getElementById('inner-obstacle'), list: obstacles, min: 2, max: 4, category: 'Combat Environment', panelId: 'description-obstacle' },
-          { el: document.getElementById('inner-enemy'), list: enemyTypes, min: 1, max: 4, category: 'Enemy Roles', panelId: 'description-enemy' }
+          { el: document.getElementById('inner-objective'), category: 'Combat Objective', panelId: 'description-objective' },
+          { el: document.getElementById('inner-combat'), category: 'Combat Type', panelId: 'description-combat' },
+          { el: document.getElementById('inner-obstacle'), category: 'Combat Environment', panelId: 'description-obstacle' },
+          { el: document.getElementById('inner-enemy'), category: 'Enemy Roles', panelId: 'description-enemy' }
         ];
 
         reels.forEach(({ el, category, panelId }) => {
