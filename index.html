@@ -10,46 +10,99 @@
     <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="styles.css">
+    <style>
+      .description-panel {
+        position: relative;
+        z-index: 1;
+        max-height: 0;
+        overflow: hidden;
+        opacity: 0;
+        margin-top: -2px;
+        padding: 0 16px;
+        border: 2px solid transparent;
+        border-top: 0;
+        border-radius: 0 0 8px 8px;
+        transform: translateY(-12px);
+        transform-origin: top;
+        transition: max-height 240ms ease, opacity 180ms ease, padding 180ms ease, border-color 180ms ease, transform 240ms ease;
+      }
+
+      .description-panel.active {
+        max-height: 420px;
+        opacity: 1;
+        padding: 12px 16px;
+        background-color: #2563eb;
+        border-color: #2563eb;
+        color: #fff;
+        text-align: left;
+        transform: translateY(0);
+      }
+
+      .reel-wrapper:has(.description-panel.active) .reel-outer {
+        border-bottom-color: #2563eb;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .description-panel strong {
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .description-panel p {
+        margin: 0;
+      }
+
+      .description-panel hr {
+        border: 0;
+        border-top: 1px solid #fff;
+        opacity: 0.25;
+        margin: 10px 0;
+      }
+
+      .intro-text {
+        max-width: 680px;
+        margin: -0.35rem auto 1.5rem;
+        color: #d4d4d8;
+        font-size: 1rem;
+        line-height: 1.4;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h1>Widowmaker</h1>
+      <p class="intro-text">Unsure of what your next combat is going to look like? Click on Generate Combat to be assailed with enough inspiration to last a whole session.</p>
       <div class="reels">
         <div class="reel-wrapper">
-          <div class="reel-label">Objective</div>
+          <div class="reel-label">Combat Objective</div>
           <div class="reel-outer">
             <div class="reel-inner" id="inner-objective"></div>
           </div>
+          <div class="description-panel" id="description-objective"></div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Combat Type</div>
           <div class="reel-outer">
             <div class="reel-inner" id="inner-combat"></div>
           </div>
+          <div class="description-panel" id="description-combat"></div>
         </div>
         <div class="reel-wrapper">
-          <div class="reel-label">Obstacles</div>
+          <div class="reel-label">Combat Environment</div>
           <div class="reel-outer">
             <div class="reel-inner" id="inner-obstacle"></div>
           </div>
+          <div class="description-panel" id="description-obstacle"></div>
         </div>
         <div class="reel-wrapper">
-          <div class="reel-label">Enemies</div>
+          <div class="reel-label">Enemy Roles</div>
           <div class="reel-outer">
             <div class="reel-inner" id="inner-enemy"></div>
           </div>
+          <div class="description-panel" id="description-enemy"></div>
         </div>
       </div>
       <button id="generateButton">Generate Combat</button>
-    </div>
-
-    <!-- Tooltip popup -->
-    <div id="tooltip-overlay" onclick="closeTooltip()">
-      <div id="tooltip-box" onclick="event.stopPropagation()">
-        <div id="tooltip-title"></div>
-        <div id="tooltip-body"></div>
-        <button id="tooltip-close" onclick="closeTooltip()">Close</button>
-      </div>
     </div>
 
     <script>
@@ -138,23 +191,51 @@
         "Skirmisher":         "This enemy prefers to bother those weaker in melee and can outrun and outmaneuver most player characters."
       };
 
-      function openTooltip(word) {
-        const desc = descriptions[word];
-        if (!desc) return;
-        document.getElementById('tooltip-title').textContent = word;
-        document.getElementById('tooltip-body').textContent = desc;
-        document.getElementById('tooltip-overlay').classList.add('active');
+      function fillDescriptionPanel(panel, words) {
+        const describedWords = words
+          .map(word => ({ word, desc: descriptions[word] }))
+          .filter(({ desc }) => desc);
+
+        if (!describedWords.length) return false;
+
+        panel.innerHTML = '';
+
+        describedWords.forEach(({ word, desc }, i) => {
+          if (i > 0) panel.appendChild(document.createElement('hr'));
+
+          const title = document.createElement('strong');
+          title.textContent = word;
+          panel.appendChild(title);
+
+          const body = document.createElement('p');
+          body.textContent = desc;
+          panel.appendChild(body);
+        });
+
+        return true;
       }
 
-      function closeTooltip() {
-        document.getElementById('tooltip-overlay').classList.remove('active');
+      function closeDescriptionPanels() {
+        document.querySelectorAll('.description-panel.active').forEach(panel => {
+          panel.classList.remove('active');
+        });
       }
 
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') closeTooltip();
-      });
+      function toggleDescriptionPanel(words, panelId) {
+        const panel = document.getElementById(panelId);
+        if (!panel) return;
 
-      function makeReelItem(text) {
+        if (panel.classList.contains('active')) {
+          panel.classList.remove('active');
+          return;
+        }
+
+        if (!fillDescriptionPanel(panel, words)) return;
+
+        panel.classList.add('active');
+      }
+
+      function makeReelItem(text, categoryLabel, panelId, showInfo = true) {
         const div = document.createElement('div');
         div.className = 'reel-item';
 
@@ -164,18 +245,6 @@
           span.textContent = word;
           div.appendChild(span);
 
-          if (descriptions[word]) {
-            const btn = document.createElement('button');
-            btn.className = 'info-btn';
-            btn.textContent = '?';
-            btn.title = `Learn more about ${word}`;
-            btn.addEventListener('click', (e) => {
-              e.stopPropagation();
-              openTooltip(word);
-            });
-            div.appendChild(btn);
-          }
-
           if (i < words.length - 1) {
             const sep = document.createElement('span');
             sep.textContent = ' + ';
@@ -184,12 +253,24 @@
           }
         });
 
+        if (showInfo && words.some(word => descriptions[word])) {
+          const btn = document.createElement('button');
+          btn.className = 'info-btn';
+          btn.textContent = '?';
+          btn.title = `Learn more about this ${categoryLabel.toLowerCase()} roll`;
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleDescriptionPanel(words, panelId);
+          });
+          div.appendChild(btn);
+        }
+
         return div;
       }
 
-      function randomGroup(list) {
+      function randomGroup(list, minCount = 1, maxCount = 3) {
         const shuffled = [...list].sort(() => Math.random() - 0.5);
-        const count = Math.floor(Math.random() * 3) + 1;
+        const count = Math.floor(Math.random() * (maxCount - minCount + 1)) + minCount;
         return shuffled.slice(0, count).join(' + ');
       }
 
@@ -205,8 +286,8 @@
         items.push(list[finalIndex]);
 
         innerEl.innerHTML = '';
-        items.forEach(text => {
-          innerEl.appendChild(makeReelItem(text));
+        items.forEach((text, i) => {
+          innerEl.appendChild(makeReelItem(text, innerEl.dataset.category, innerEl.dataset.panelId, i === items.length - 1));
         });
 
         innerEl.style.transition = 'none';
@@ -217,18 +298,18 @@
         innerEl.style.transform = `translateY(${targetY}px)`;
       }
 
-      function buildGroupReel(innerEl, list, spinDuration) {
+      function buildGroupReel(innerEl, list, spinDuration, minCount = 1, maxCount = 3) {
         const SPIN_COUNT = 30;
         const items = [];
 
         for (let i = 0; i < SPIN_COUNT; i++) {
-          items.push(randomGroup(list));
+          items.push(randomGroup(list, minCount, maxCount));
         }
-        items.push(randomGroup(list));
+        items.push(randomGroup(list, minCount, maxCount));
 
         innerEl.innerHTML = '';
-        items.forEach(text => {
-          innerEl.appendChild(makeReelItem(text));
+        items.forEach((text, i) => {
+          innerEl.appendChild(makeReelItem(text, innerEl.dataset.category, innerEl.dataset.panelId, i === items.length - 1));
         });
 
         innerEl.style.transition = 'none';
@@ -240,17 +321,12 @@
 
       function spinReels() {
         generateButton.disabled = true;
+        closeDescriptionPanels();
 
-        buildReel(
-          document.getElementById('inner-objective'),
-          objectives,
-          Math.floor(Math.random() * objectives.length),
-          1800
-        );
-
-        buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2200);
-        buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2600);
-        buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 3000);
+        buildGroupReel(document.getElementById('inner-objective'), objectives, 1800, 1, 2);
+        buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2200, 1, 2);
+        buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2600, 2, 4);
+        buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 3000, 1, 4);
 
         setTimeout(() => {
           generateButton.disabled = false;
@@ -261,17 +337,15 @@
 
       (function initReels() {
         const reels = [
-          { el: document.getElementById('inner-objective'), list: objectives, single: true },
-          { el: document.getElementById('inner-combat'), list: combatTypes, single: false },
-          { el: document.getElementById('inner-obstacle'), list: obstacles, single: false },
-          { el: document.getElementById('inner-enemy'), list: enemyTypes, single: false }
+          { el: document.getElementById('inner-objective'), list: objectives, min: 1, max: 2, category: 'Combat Objective', panelId: 'description-objective' },
+          { el: document.getElementById('inner-combat'), list: combatTypes, min: 1, max: 2, category: 'Combat Type', panelId: 'description-combat' },
+          { el: document.getElementById('inner-obstacle'), list: obstacles, min: 2, max: 4, category: 'Combat Environment', panelId: 'description-obstacle' },
+          { el: document.getElementById('inner-enemy'), list: enemyTypes, min: 1, max: 4, category: 'Enemy Roles', panelId: 'description-enemy' }
         ];
 
-        reels.forEach(({ el, list, single }) => {
-          const text = single
-            ? list[Math.floor(Math.random() * list.length)]
-            : randomGroup(list);
-          el.appendChild(makeReelItem(text));
+        reels.forEach(({ el, category, panelId }) => {
+          el.dataset.category = category;
+          el.dataset.panelId = panelId;
         });
       })();
     </script>
