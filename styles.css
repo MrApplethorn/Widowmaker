@@ -1,0 +1,130 @@
+body {
+        font-family: 'Germania One', sans-serif;
+        background-color: #27272a;
+        color: #fff;
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 90%;
+        max-width: 900px;
+        text-align: center;
+      }
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .reels {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        justify-content: center;
+        margin: 2rem 0;
+      }
+
+      .reel-outer {
+        background: #18181b;
+        border: 2px solid #52525b;
+        border-radius: 10px;
+        height: 80px;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .reel-outer::before,
+      .reel-outer::after {
+        content: '';
+        position: absolute;
+        left: 0; right: 0;
+        height: 22px;
+        z-index: 2;
+        pointer-events: none;
+      }
+
+      .reel-outer::before {
+        top: 0;
+        background: linear-gradient(to bottom, #18181b, transparent);
+      }
+
+      .reel-outer::after {
+        bottom: 0;
+        background: linear-gradient(to top, #18181b, transparent);
+      }
+
+      .reel-inner {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .reel-item {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: #fff;
+        padding: 0 8px;
+        text-align: center;
+        line-height: 1.2;
+        flex-shrink: 0;
+      }
+
+      button {
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2rem;
+        font-family: 'Germania One', sans-serif;
+        border-radius: 10px;
+        border: none;
+        background-color: #e40712;
+        color: #fff;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.1s ease;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      button:hover {
+        background-color: #232b2f;
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      @media (min-width: 600px) {
+        h1 {
+          font-size: 2.5rem;
+        }
+
+        .reel-item {
+          font-size: 1.2rem;
+        }
+      }
+		.reel-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.reel-label {
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  color: #a1a1aa;
+  text-transform: uppercase;
+}
