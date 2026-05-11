@@ -9,35 +9,37 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Germania+One&display=swap" rel="stylesheet">
 
-	<link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <div class="container">
       <h1>Widowmaker</h1>
-      <div class="reel-wrapper">
-		<div class="reel-label">Objective</div>
-		<div class="reel-outer">
-		  <div class="reel-inner" id="inner-objective"></div>
-		</div>
-	  </div>
-	  <div class="reel-wrapper">
-		<div class="reel-label">Combat Type</div>
-		<div class="reel-outer">
-		  <div class="reel-inner" id="inner-combat"></div>
-		  </div>
-	  </div>
-	  <div class="reel-wrapper">
-		<div class="reel-label">Obstacles</div>
-		<div class="reel-outer">
-		  <div class="reel-inner" id="inner-obstacle"></div>
-		  </div>
-	  </div>
-	  <div class="reel-wrapper">
-		<div class="reel-label">Enemies</div>
-		<div class="reel-outer">
-		  <div class="reel-inner" id="inner-enemy"></div>
-		  </div>
-	  </div>
+      <div class="reels">
+        <div class="reel-wrapper">
+          <div class="reel-label">Objective</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-objective"></div>
+          </div>
+        </div>
+        <div class="reel-wrapper">
+          <div class="reel-label">Combat Type</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-combat"></div>
+          </div>
+        </div>
+        <div class="reel-wrapper">
+          <div class="reel-label">Obstacles</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-obstacle"></div>
+          </div>
+        </div>
+        <div class="reel-wrapper">
+          <div class="reel-label">Enemies</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-enemy"></div>
+          </div>
+        </div>
+      </div>
       <button id="generateButton">Generate Combat</button>
     </div>
 
@@ -89,18 +91,16 @@
       ];
 
       function randomEnemyGroup() {
-	const shuffled = [...enemyTypes].sort(() => Math.random() - 0.5);
-	const count = Math.floor(Math.random() * 3) + 1; // 1–3 enemies
-	return shuffled.slice(0, count).join(" + ");
+        const shuffled = [...enemyTypes].sort(() => Math.random() - 0.5);
+        const count = Math.floor(Math.random() * 3) + 1;
+        return shuffled.slice(0, count).join(" + ");
       }
 
-		function randomObstacleGroup() {
-  const shuffled = [...obstacles].sort(() => Math.random() - 0.5);
-
-  const count = Math.floor(Math.random() * 3) + 1; // 1–3 obstacles
-
-  return shuffled.slice(0, count).join(" + ");
-}
+      function randomObstacleGroup() {
+        const shuffled = [...obstacles].sort(() => Math.random() - 0.5);
+        const count = Math.floor(Math.random() * 3) + 1;
+        return shuffled.slice(0, count).join(" + ");
+      }
 
       const generateButton = document.getElementById("generateButton");
 
@@ -154,70 +154,46 @@
         );
 
         const obstacleResults = [];
+        for (let i = 0; i < 30; i++) {
+          obstacleResults.push(randomObstacleGroup());
+        }
+        obstacleResults.push(randomObstacleGroup());
 
-for (let i = 0; i < 30; i++) {
-  obstacleResults.push(randomObstacleGroup());
-}
-
-const finalObstacle = randomObstacleGroup();
-
-obstacleResults.push(finalObstacle);
-
-const obstacleInner = document.getElementById('inner-obstacle');
-
-obstacleInner.innerHTML = '';
-
-obstacleResults.forEach(text => {
-  const div = document.createElement('div');
-  div.className = 'reel-item';
-  div.textContent = text;
-  obstacleInner.appendChild(div);
-});
-
-obstacleInner.style.transition = 'none';
-obstacleInner.style.transform = 'translateY(0)';
-
-const targetY = -(30 * 80);
-
-obstacleInner.getBoundingClientRect();
-
-obstacleInner.style.transition =
-  `transform 2600ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-
-obstacleInner.style.transform = `translateY(${targetY}px)`;
+        const obstacleInner = document.getElementById('inner-obstacle');
+        obstacleInner.innerHTML = '';
+        obstacleResults.forEach(text => {
+          const div = document.createElement('div');
+          div.className = 'reel-item';
+          div.textContent = text;
+          obstacleInner.appendChild(div);
+        });
+        obstacleInner.style.transition = 'none';
+        obstacleInner.style.transform = 'translateY(0)';
+        obstacleInner.getBoundingClientRect();
+        obstacleInner.style.transition =
+          `transform 2600ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
+        obstacleInner.style.transform = `translateY(${-(30 * 80)}px)`;
 
         const enemyResults = [];
+        for (let i = 0; i < 30; i++) {
+          enemyResults.push(randomEnemyGroup());
+        }
+        enemyResults.push(randomEnemyGroup());
 
-for (let i = 0; i < 30; i++) {
-  enemyResults.push(randomEnemyGroup());
-}
-
-const finalEnemy = randomEnemyGroup();
-
-enemyResults.push(finalEnemy);
-
-const enemyInner = document.getElementById('inner-enemy');
-
-enemyInner.innerHTML = '';
-
-enemyResults.forEach(text => {
-  const div = document.createElement('div');
-  div.className = 'reel-item';
-  div.textContent = text;
-  enemyInner.appendChild(div);
-});
-
-enemyInner.style.transition = 'none';
-enemyInner.style.transform = 'translateY(0)';
-
-const targetY = -(30 * 80);
-
-enemyInner.getBoundingClientRect();
-
-enemyInner.style.transition =
-  `transform 3000ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-
-enemyInner.style.transform = `translateY(${targetY}px)`;
+        const enemyInner = document.getElementById('inner-enemy');
+        enemyInner.innerHTML = '';
+        enemyResults.forEach(text => {
+          const div = document.createElement('div');
+          div.className = 'reel-item';
+          div.textContent = text;
+          enemyInner.appendChild(div);
+        });
+        enemyInner.style.transition = 'none';
+        enemyInner.style.transform = 'translateY(0)';
+        enemyInner.getBoundingClientRect();
+        enemyInner.style.transition =
+          `transform 3000ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
+        enemyInner.style.transform = `translateY(${-(30 * 80)}px)`;
 
         setTimeout(() => {
           generateButton.disabled = false;
@@ -228,29 +204,16 @@ enemyInner.style.transform = `translateY(${targetY}px)`;
 
       (function initReels() {
         const reels = [
-          {
-            el: document.getElementById('inner-objective'),
-            list: objectives
-          },
-          {
-            el: document.getElementById('inner-combat'),
-            list: combatTypes
-          },
-          {
-            el: document.getElementById('inner-obstacle'),
-            list: obstacles
-          },
-          {
-            el: document.getElementById('inner-enemy'),
-            list: enemyTypes
-          }
+          { el: document.getElementById('inner-objective'), list: objectives },
+          { el: document.getElementById('inner-combat'), list: combatTypes },
+          { el: document.getElementById('inner-obstacle'), list: obstacles },
+          { el: document.getElementById('inner-enemy'), list: enemyTypes }
         ];
 
         reels.forEach(({ el, list }) => {
           const div = document.createElement('div');
           div.className = 'reel-item';
-          div.textContent =
-            list[Math.floor(Math.random() * list.length)];
+          div.textContent = list[Math.floor(Math.random() * list.length)];
           el.appendChild(div);
         });
       })();
