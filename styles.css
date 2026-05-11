@@ -37,6 +37,7 @@ body {
         height: 80px;
         overflow: hidden;
         position: relative;
+        z-index: 2;
       }
 
       .reel-outer::before,
