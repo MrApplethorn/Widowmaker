@@ -43,6 +43,15 @@
       <button id="generateButton">Generate Combat</button>
     </div>
 
+    <!-- Tooltip popup -->
+    <div id="tooltip-overlay" onclick="closeTooltip()">
+      <div id="tooltip-box" onclick="event.stopPropagation()">
+        <div id="tooltip-title"></div>
+        <div id="tooltip-body"></div>
+        <button id="tooltip-close" onclick="closeTooltip()">Close</button>
+      </div>
+    </div>
+
     <script>
       const objectives = [
         "Deathmatch",
@@ -90,10 +99,100 @@
         "Skirmisher"
       ];
 
+      const descriptions = {
+        // Objectives
+        "Deathmatch":         "A straight-up fight — kill or be killed. No objectives, no mercy. Last side standing wins.",
+        "Sabotage":           "The players must destroy a target — a machine, a supply cache, a bridge — before the enemy can stop them.",
+        "Daring Escape":      "The players are trapped and must fight their way out. Every second counts.",
+        "Hold the Fort":      "Defend a position against waves of attackers for a set amount of time or until reinforcements arrive.",
+        "Waves of Bad Guys":  "Enemies keep coming in escalating waves. Survive as long as possible.",
+        "Escort":             "Protect a VIP, vehicle, or object as it moves from A to B. Enemies will try to stop it.",
+        "Base Defense":       "The players' home turf is under attack. Repel the assault before it's overrun.",
+        "Yoink and Skedaddle":"Grab a specific item or person and get out fast. Stealth or speed — your call.",
+        "Peace Makers":       "Broker a ceasefire or stop a conflict from erupting — without things going sideways.",
+        "The Arrest":         "Capture a target alive. Lethal force is a last resort.",
+        // Combat Types
+        "Skirmish":           "A quick, chaotic clash — small numbers, fast movement, no front lines.",
+        "Ambush":             "The enemy has the drop on the players. They must react fast or get wiped out.",
+        "Targeted Strike":    "A precision attack on a specific person, place, or thing. Get in, hit hard, get out.",
+        "Horde of Bad Guys":  "Overwhelming numbers of weaker enemies. Crowd control and positioning matter.",
+        "Elite Team":         "A small group of dangerous, coordinated enemies. Each one is a serious threat.",
+        "Stomping Ground":    "Fighting on the enemy's home turf. They know every corner — the players don't.",
+        "Boss Battle":        "One massive, powerful enemy that demands everything the players have.",
+        "Puzzle":             "The combat has a twist — a mechanic, weakness, or environmental factor that must be figured out to win.",
+        // Obstacles
+        "Red Barrels":        "Explosive environmental hazards. Great for creative destruction, bad to stand next to.",
+        "Siege Weapons":      "Catapults, ballistae, cannons — powerful ranged weapons that can turn the tide if captured or destroyed.",
+        "Ammo Boxes":         "Limited ammunition means players must scavenge mid-fight to keep their weapons loaded.",
+        "Big Drops":          "Deadly falls or drops that punish careless movement and reward vertical tactics.",
+        "Doors":              "Chokepoints that control flow — can be barricaded, breached, or used to funnel enemies.",
+        "Interactables":      "Levers, switches, valves — environmental controls that can help or hinder if used at the right moment.",
+        "Terrain":            "Difficult ground — mud, rubble, ice, dense foliage — that slows movement and breaks formations.",
+        "Platforms":          "Elevated surfaces that reward height advantage and punish those caught below.",
+        // Enemy Types
+        "Ambusher":           "Strikes from hiding, then retreats. Designed to isolate and pick off stragglers.",
+        "Artillery":          "Long-range bombardment. Stays back and forces players to close the gap under fire.",
+        "Brute":              "Big, tough, hits like a freight train. Soaks damage and smashes through defences.",
+        "Controller":         "Manipulates the battlefield — traps, crowd control, area denial. Hard to ignore.",
+        "Leader":             "Boosts nearby allies. Taking them out early changes the whole dynamic of the fight.",
+        "Support":            "Heals and buffs allies. A priority target that hangs back and is hard to reach.",
+        "Soldier":            "A well-rounded, disciplined fighter. No surprises — just solid, reliable threat.",
+        "Skirmisher":         "Fast and elusive. Harasses from range, kites players, and avoids direct confrontation."
+      };
+
+      function openTooltip(word) {
+        const desc = descriptions[word];
+        if (!desc) return;
+        document.getElementById('tooltip-title').textContent = word;
+        document.getElementById('tooltip-body').textContent = desc;
+        document.getElementById('tooltip-overlay').classList.add('active');
+      }
+
+      function closeTooltip() {
+        document.getElementById('tooltip-overlay').classList.remove('active');
+      }
+
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') closeTooltip();
+      });
+
+      function makeReelItem(text) {
+        const div = document.createElement('div');
+        div.className = 'reel-item';
+
+        const words = text.split(' + ');
+        words.forEach((word, i) => {
+          const span = document.createElement('span');
+          span.textContent = word;
+          div.appendChild(span);
+
+          if (descriptions[word]) {
+            const btn = document.createElement('button');
+            btn.className = 'info-btn';
+            btn.textContent = '?';
+            btn.title = `Learn more about ${word}`;
+            btn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              openTooltip(word);
+            });
+            div.appendChild(btn);
+          }
+
+          if (i < words.length - 1) {
+            const sep = document.createElement('span');
+            sep.textContent = ' + ';
+            sep.className = 'separator';
+            div.appendChild(sep);
+          }
+        });
+
+        return div;
+      }
+
       function randomGroup(list) {
         const shuffled = [...list].sort(() => Math.random() - 0.5);
         const count = Math.floor(Math.random() * 3) + 1;
-        return shuffled.slice(0, count).join(" + ");
+        return shuffled.slice(0, count).join(' + ');
       }
 
       const generateButton = document.getElementById("generateButton");
@@ -105,28 +204,18 @@
         for (let i = 0; i < SPIN_COUNT; i++) {
           items.push(list[Math.floor(Math.random() * list.length)]);
         }
-
         items.push(list[finalIndex]);
 
         innerEl.innerHTML = '';
-
         items.forEach(text => {
-          const div = document.createElement('div');
-          div.className = 'reel-item';
-          div.textContent = text;
-          innerEl.appendChild(div);
+          innerEl.appendChild(makeReelItem(text));
         });
 
         innerEl.style.transition = 'none';
         innerEl.style.transform = 'translateY(0)';
-
         const targetY = -(SPIN_COUNT * 80);
-
         innerEl.getBoundingClientRect();
-
-        innerEl.style.transition =
-          `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-
+        innerEl.style.transition = `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
         innerEl.style.transform = `translateY(${targetY}px)`;
       }
 
@@ -140,22 +229,14 @@
         items.push(randomGroup(list));
 
         innerEl.innerHTML = '';
-
         items.forEach(text => {
-          const div = document.createElement('div');
-          div.className = 'reel-item';
-          div.textContent = text;
-          innerEl.appendChild(div);
+          innerEl.appendChild(makeReelItem(text));
         });
 
         innerEl.style.transition = 'none';
         innerEl.style.transform = 'translateY(0)';
-
         innerEl.getBoundingClientRect();
-
-        innerEl.style.transition =
-          `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
-
+        innerEl.style.transition = `transform ${spinDuration}ms cubic-bezier(0.25, 0.1, 0.2, 1)`;
         innerEl.style.transform = `translateY(${-(SPIN_COUNT * 80)}px)`;
       }
 
@@ -169,23 +250,9 @@
           1800
         );
 
-        buildGroupReel(
-          document.getElementById('inner-combat'),
-          combatTypes,
-          2200
-        );
-
-        buildGroupReel(
-          document.getElementById('inner-obstacle'),
-          obstacles,
-          2600
-        );
-
-        buildGroupReel(
-          document.getElementById('inner-enemy'),
-          enemyTypes,
-          3000
-        );
+        buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2200);
+        buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2600);
+        buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 3000);
 
         setTimeout(() => {
           generateButton.disabled = false;
@@ -203,12 +270,10 @@
         ];
 
         reels.forEach(({ el, list, single }) => {
-          const div = document.createElement('div');
-          div.className = 'reel-item';
-          div.textContent = single
+          const text = single
             ? list[Math.floor(Math.random() * list.length)]
             : randomGroup(list);
-          el.appendChild(div);
+          el.appendChild(makeReelItem(text));
         });
       })();
     </script>
