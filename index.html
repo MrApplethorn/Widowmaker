@@ -50,6 +50,20 @@
           </div>
           <div class="description-panel" id="description-enemy"></div>
         </div>
+        <div class="reel-wrapper">
+          <div class="reel-label">Enemy Type</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-creature"></div>
+          </div>
+          <div class="description-panel" id="description-creature"></div>
+        </div>
+        <div class="reel-wrapper">
+          <div class="reel-label">Enemy Damage Synergy</div>
+          <div class="reel-outer">
+            <div class="reel-inner" id="inner-damage"></div>
+          </div>
+          <div class="description-panel" id="description-damage"></div>
+        </div>
       </div>
       <button id="generateButton">Generate Combat</button>
     </div>
@@ -98,6 +112,39 @@
         "Support",
         "Soldier",
         "Skirmisher"
+      ];
+
+      const creatureTypes = [
+        "Aberration",
+        "Beast",
+        "Celestial",
+        "Construct",
+        "Dragon",
+        "Elemental",
+        "Fey",
+        "Fiend",
+        "Giant",
+        "Humanoid",
+        "Monstrosity",
+        "Ooze",
+        "Plant",
+        "Undead"
+      ];
+
+      const damageTypes = [
+        "Acid",
+        "Bludgeoning",
+        "Cold",
+        "Fire",
+        "Force",
+        "Lightning",
+        "Necrotic",
+        "Piercing",
+        "Poison",
+        "Psychic",
+        "Radiant",
+        "Slashing",
+        "Thunder"
       ];
 
       const descriptions = {
@@ -254,10 +301,12 @@
         buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2200, 1, 2);
         buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2600, 2, 4);
         buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 3000, 1, 4);
+        buildGroupReel(document.getElementById('inner-creature'), creatureTypes, 3400, 1, 2);
+        buildGroupReel(document.getElementById('inner-damage'), damageTypes, 3800, 1, 2);
 
         setTimeout(() => {
           generateButton.disabled = false;
-        }, 3100);
+        }, 3900);
       }
 
       generateButton.addEventListener("click", spinReels);
@@ -267,7 +316,9 @@
           { el: document.getElementById('inner-objective'), category: 'Combat Objective', panelId: 'description-objective' },
           { el: document.getElementById('inner-combat'), category: 'Combat Type', panelId: 'description-combat' },
           { el: document.getElementById('inner-obstacle'), category: 'Combat Environment', panelId: 'description-obstacle' },
-          { el: document.getElementById('inner-enemy'), category: 'Enemy Roles', panelId: 'description-enemy' }
+          { el: document.getElementById('inner-enemy'), category: 'Enemy Roles', panelId: 'description-enemy' },
+          { el: document.getElementById('inner-creature'), category: 'Enemy Type', panelId: 'description-creature' },
+          { el: document.getElementById('inner-damage'), category: 'Enemy Damage Synergy', panelId: 'description-damage' }
         ];
 
         reels.forEach(({ el, category, panelId }) => {
