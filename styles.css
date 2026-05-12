@@ -17,7 +17,7 @@ body {
         text-align: center;
       }
 
-      summary {
+      h1 {
         font-size: 2rem;
         margin-bottom: 1rem;
       }
@@ -253,7 +253,7 @@ body {
       }
 
       @media (min-width: 600px) {
-        summary {
+        h1 {
           font-size: 2.5rem;
         }
       }
