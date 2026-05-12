@@ -250,15 +250,11 @@
         });
 
         if (showInfo && words.some(word => descriptions[word])) {
-          const btn = document.createElement('button');
-          btn.className = 'info-btn';
-          btn.textContent = '?';
-          btn.title = `Learn more about this ${categoryLabel.toLowerCase()} roll`;
-          btn.addEventListener('click', (e) => {
+          div.style.cursor = 'pointer';
+          div.addEventListener('click', (e) => {
             e.stopPropagation();
             toggleDescriptionPanel(words, panelId);
           });
-          div.appendChild(btn);
         }
 
         return div;
