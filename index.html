@@ -80,12 +80,8 @@
 
         panel.innerHTML = '';
 
-        describedWords.forEach(({ word, desc }, i) => {
+        describedWords.forEach(({ desc }, i) => {
           if (i > 0) panel.appendChild(document.createElement('hr'));
-
-          const title = document.createElement('strong');
-          title.textContent = word;
-          panel.appendChild(title);
 
           const body = document.createElement('p');
           body.textContent = desc;
