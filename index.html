@@ -26,42 +26,42 @@
           <div class="reel-label">Combat Objective</div>
           <div class="reel-outer" data-panel-id="description-objective">
             <div class="reel-inner" id="inner-objective"></div>
-            <div class="description-panel" id="description-objective"></div>
+            <div class="overlay-panel" id="description-objective"></div>
           </div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Combat Type</div>
           <div class="reel-outer" data-panel-id="description-combat">
             <div class="reel-inner" id="inner-combat"></div>
-            <div class="description-panel" id="description-combat"></div>
+            <div class="overlay-panel" id="description-combat"></div>
           </div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Combat Environment</div>
           <div class="reel-outer" data-panel-id="description-obstacle">
             <div class="reel-inner" id="inner-obstacle"></div>
-            <div class="description-panel" id="description-obstacle"></div>
+            <div class="overlay-panel" id="description-obstacle"></div>
           </div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Enemy Roles</div>
           <div class="reel-outer" data-panel-id="description-enemy">
             <div class="reel-inner" id="inner-enemy"></div>
-            <div class="description-panel" id="description-enemy"></div>
+            <div class="overlay-panel" id="description-enemy"></div>
           </div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Enemy Type</div>
           <div class="reel-outer" data-panel-id="description-creature">
             <div class="reel-inner" id="inner-creature"></div>
-            <div class="description-panel" id="description-creature"></div>
+            <div class="overlay-panel" id="description-creature"></div>
           </div>
         </div>
         <div class="reel-wrapper">
           <div class="reel-label">Enemy Damage Synergy</div>
           <div class="reel-outer" data-panel-id="description-damage">
             <div class="reel-inner" id="inner-damage"></div>
-            <div class="description-panel" id="description-damage"></div>
+            <div class="overlay-panel" id="description-damage"></div>
           </div>
         </div>
       </div>
@@ -92,7 +92,7 @@
       }
 
       function closeDescriptionPanels() {
-        document.querySelectorAll('.description-panel.active').forEach(panel => {
+        document.querySelectorAll('.overlay-panel.active').forEach(panel => {
           panel.classList.remove('active');
         });
       }
