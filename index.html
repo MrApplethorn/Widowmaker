@@ -154,12 +154,12 @@
         generateButton.disabled = true;
         closeDescriptionPanels();
 
-        buildGroupReel(document.getElementById('inner-objective'), objectives, 1800, 1, 2);
-        buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2200, 1, 2);
-        buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2600, 2, 4);
-        buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 3000, 1, 4);
-        buildGroupReel(document.getElementById('inner-creature'), creatureTypes, 3400, 1, 2);
-        buildGroupReel(document.getElementById('inner-damage'), damageTypes, 3800, 1, 2);
+        buildGroupReel(document.getElementById('inner-objective'), objectives, 1800, 1, 1);
+        buildGroupReel(document.getElementById('inner-combat'), combatTypes, 2000, 1, 1);
+        buildGroupReel(document.getElementById('inner-obstacle'), obstacles, 2200, 3, 3);
+        buildGroupReel(document.getElementById('inner-enemy'), enemyTypes, 2400, 3, 3);
+        buildGroupReel(document.getElementById('inner-creature'), creatureTypes, 2600, 2, 2);
+        buildGroupReel(document.getElementById('inner-damage'), damageTypes, 2800, 2, 2);
 
         setTimeout(() => {
           generateButton.disabled = false;
